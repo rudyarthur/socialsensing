@@ -43,7 +43,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 	//data containers
 	var geojson = {}; //Layer manager
 	var tweetInfo = {}; //Input Data
-	var grid_sizes = {"county":"county",  "coarse":"10", "fine":"40"}
+	var grid_sizes = {"county":"county",  "coarse":"15", "fine":"60"}
 	var processedTweetInfo = { "county" : {"stats" : {}, "count" : {}, "embed" : {}},
 		"coarse" : {"stats" : {}, "count" : {}, "embed" : {}},
 		"fine" : {"stats" : {}, "count" : {}, "embed" : {}},
