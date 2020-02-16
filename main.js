@@ -27,30 +27,35 @@ import {timeslider, cleanDate} from './timeSlider.js';
 	
 	//layers for the different polygons
 	var poly_layers = {};
-	poly_layers["county"] = L.layerGroup().addTo( map );
+	poly_layers["county"] = L.layerGroup()
+	poly_layers["coarse"] = L.layerGroup().addTo( map ); //This one is active
+	poly_layers["fine"] = L.layerGroup();
 	var basemapControl = { "numbers": number_layers, "polygon": poly_layers }
 
 	//polygon outlines and counts/stats
-	var polygonData = { "county" : fgsData }
+	var polygonData = { "county" : fgsData, "coarse" : coarseData, "fine" : fineData }
 
 
 	//Set defaults
 	var active_number = "count";
-	var active_polys = "county";
+	var active_polys = "coarse";
 	
 	//data containers
 	var geojson = {}; //Layer manager
 	var tweetInfo = {}; //Input Data
-	var processedTweetInfo = { "county" : {"stats" : {}, "count" : {}, "embed" : {}} } //Processed input (summed over time)
+	var grid_sizes = {"county":"county",  "coarse":"10", "fine":"40"}
+	var processedTweetInfo = { "county" : {"stats" : {}, "count" : {}, "embed" : {}},
+		"coarse" : {"stats" : {}, "count" : {}, "embed" : {}},
+		"fine" : {"stats" : {}, "count" : {}, "embed" : {}},
+		} //Processed input (summed over time)
 
 	//The times in the input JSON
 	var time_keys;
-	var default_min = -11;
+	var default_min = -20;
 	var default_max = 0;
 	
 	//stats stuff
 	var B = 1; //countyStats["length"]; //number of stats days
-	var stats = {"county" : []};
 	
 	//Clicked a county
 	var clicked = "";
@@ -190,6 +195,8 @@ import {timeslider, cleanDate} from './timeSlider.js';
 		lcontrols[key] = L.control.layers( basemapControl[key], {} ).addTo( map );
 		lcontrols[key].setPosition('topleft');
 	}
+
+	
 	map.on('baselayerchange', function(e) {
 		if( e.name in basemapControl["polygon"] ){
 			active_polys = e.name;
@@ -213,7 +220,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 			.then(function(tweet_json) {
 				tweetInfo = tweet_json
 				time_keys = getTimes(tweetInfo)
-				processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-default_max, -default_min)); 
+				processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-default_max, -default_min), grid_sizes); 
 				resetLayers(false);	
 				tinfo.update_header();
 				initSlider();
@@ -247,7 +254,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 				  values: [ default_min, default_max ],
 				  slide: function( event, ui ) {
 					  
-					processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-ui.values[ 1 ], -ui.values[ 0 ]) ); 
+					processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-ui.values[ 1 ], -ui.values[ 0 ]), grid_sizes ); 
 					resetLayers(false);	
 					tinfo.update_header();
 					if(clicked != ""){ displayText(clicked); }

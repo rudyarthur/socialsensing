@@ -14,7 +14,7 @@ export function getTimes(tweetInfo){
 	return time_keys;
 }
 
-export function processData(tweetInfo, processedTweetInfo, polygonData, time_keys){
+export function processData(tweetInfo, processedTweetInfo, polygonData, time_keys, grid_sizes){
 
 	//clean dicts
 	for( var poly in processedTweetInfo ){ //counties, coarse, fine
@@ -32,17 +32,18 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, time_key
 	for( var i in time_keys ){ //all times
 		var tid = time_keys[i]
 		for( var poly in processedTweetInfo ){ //counties, coarse, fine
-			for( var place in tweetInfo[tid][poly] ){ //all counties/boxes
+			for( var place in tweetInfo[tid][grid_sizes[poly]] ){ //all counties/boxes
+				console.log(tid, poly, grid_sizes[poly], place)
 				//add the counts
-				var wt = tweetInfo[tid][poly][place]["w"];
+				var wt = tweetInfo[tid][ grid_sizes[poly] ][place]["w"];
 				if(place in processedTweetInfo[poly]["count"]){
 					processedTweetInfo[poly]["count"][place] += wt;
 				} else {
 					processedTweetInfo[poly]["count"][place] = wt;
 					processedTweetInfo[poly]["embed"][place] = ""
 				}
-				for(var i in tweetInfo[tid][poly][place]["i"]){
-					var tweetcode_id = tweetInfo[tid][poly][place]["i"][i];
+				for(var i in tweetInfo[tid][ grid_sizes[poly] ][place]["i"]){
+					var tweetcode_id = tweetInfo[tid][ grid_sizes[poly] ][place]["i"][i];
 					var tweetcode = tweetInfo[tid]["tweets"][tweetcode_id]; //html of the tweet
 					if( tweetcode != ""){ //should I show a max #of tweets?
 						processedTweetInfo[poly]["embed"][place] += "<tr><td>" + tweetcode + "</td></tr>"
@@ -63,7 +64,7 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, time_key
 					//stats_wt = getStatsIdx(place, wt, poly);
 					//stats_wt = 100*( 1 - Math.pow( 1 - ((B-stats_wt) / (B)) , tdiff ) );
 				}
-				stats_wt = wt;//TODO, testing
+				stats_wt = 1;//TODO, testing
 				processedTweetInfo[poly]["stats"][ place ] = stats_wt;
 				polygonData[poly]["features"][i]["properties"]["count"] = wt;
 				polygonData[poly]["features"][i]["properties"]["stats"] = stats_wt;
