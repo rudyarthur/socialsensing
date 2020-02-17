@@ -1,3 +1,9 @@
+import {fgsData} from './county_bi.js';
+import {coarseData} from './coarse_bi.js';
+import {fineData} from './fine_bi.js';
+import {countyStats} from './data/county_stats.js';
+import {coarseStats} from './data/coarse_stats.js';
+import {fineStats} from './data/fine_stats.js';
 import {getColor, getFill, getFeatureStyle, dohighlightFeature} from './layerStyle.js';
 import {makeLegend} from './legend.js';
 import {tinfo} from './tweetPanel.js';
