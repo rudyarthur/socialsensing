@@ -22,13 +22,13 @@ import {timeslider, cleanDate} from './timeSlider.js';
 
 	//define the layers for the different counts
 	var number_layers = {};
-	number_layers["stats"] = L.layerGroup();
-	number_layers["count"] = L.layerGroup().addTo( map );
+	number_layers["stats"] = L.layerGroup().addTo( map );
+	number_layers["count"] = L.layerGroup();
 	
 	//layers for the different polygons
 	var poly_layers = {};
-	poly_layers["county"] = L.layerGroup()
-	poly_layers["coarse"] = L.layerGroup().addTo( map ); //This one is active
+	poly_layers["county"] = L.layerGroup().addTo( map ); //This one is active
+	poly_layers["coarse"] = L.layerGroup()
 	poly_layers["fine"] = L.layerGroup();
 	var basemapControl = { "numbers": number_layers, "polygon": poly_layers }
 
@@ -37,8 +37,8 @@ import {timeslider, cleanDate} from './timeSlider.js';
 
 
 	//Set defaults
-	var active_number = "count";
-	var active_polys = "coarse";
+	var active_number = "stats";
+	var active_polys = "county";
 	
 	//data containers
 	var geojson = {}; //Layer manager
@@ -51,11 +51,13 @@ import {timeslider, cleanDate} from './timeSlider.js';
 
 	//The times in the input JSON
 	var time_keys;
-	var default_min = -20;
+	var default_min = -96*60 + 1;
 	var default_max = 0;
 	
 	//stats stuff
-	var B = 1; //countyStats["length"]; //number of stats days
+	var B = 1407; //countyStats["cambridgeshire"].length; //number of stats days
+	var statsData = {"county":countyStats, "coarse":coarseStats, "fine":fineStats};
+	
 	
 	//Clicked a county
 	var clicked = "";
@@ -213,14 +215,14 @@ import {timeslider, cleanDate} from './timeSlider.js';
 	/////////////////////////////
 	function read_data(){
 		
-			fetch("http://localhost:8080/live.json")
+			fetch("http://localhost:8080/data/live.json")
 			.then(function(response) {
 				return response.json();
 			})
 			.then(function(tweet_json) {
 				tweetInfo = tweet_json
 				time_keys = getTimes(tweetInfo)
-				processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-default_max, -default_min), grid_sizes); 
+				processData(tweetInfo, processedTweetInfo, polygonData,  statsData, B, time_keys.slice(-default_max, -default_min), grid_sizes); 
 				resetLayers(false);	
 				tinfo.update_header();
 				initSlider();
@@ -242,7 +244,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 			
 			//Add the initial header
 			$( function() {
-				$( ".timeslider_input" ).val( cleanDate(time_keys[4], 0) + " - " + cleanDate(time_keys[0], 1) ); 
+				$( ".timeslider_input" ).val( cleanDate(time_keys[-default_min], 0) + " - " + cleanDate(time_keys[-default_max], 1) ); 
 			} );
 	  	
 			//how to react to moving the slider
@@ -254,7 +256,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 				  values: [ default_min, default_max ],
 				  slide: function( event, ui ) {
 					  
-					processData(tweetInfo, processedTweetInfo, polygonData, time_keys.slice(-ui.values[ 1 ], -ui.values[ 0 ]), grid_sizes ); 
+					processData(tweetInfo, processedTweetInfo, polygonData, statsData, B, time_keys.slice(-ui.values[ 1 ], -ui.values[ 0 ]), grid_sizes ); 
 					resetLayers(false);	
 					tinfo.update_header();
 					if(clicked != ""){ displayText(clicked); }

@@ -1,6 +1,6 @@
-function getStatsIdx(place, val, poly, B){
+function getStatsIdx(place, val, poly, B, statsData){
 	for(var i=0;i<B; i++){
-		if(val <= stats[poly][place][i]){
+		if(val <= statsData[poly][place][i]){
 			return i;
 		}
 	}
@@ -14,7 +14,7 @@ export function getTimes(tweetInfo){
 	return time_keys;
 }
 
-export function processData(tweetInfo, processedTweetInfo, polygonData, time_keys, grid_sizes){
+export function processData(tweetInfo, processedTweetInfo, polygonData, statsData, B, time_keys, grid_sizes){
 
 	//clean dicts
 	for( var poly in processedTweetInfo ){ //counties, coarse, fine
@@ -33,7 +33,6 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, time_key
 		var tid = time_keys[i]
 		for( var poly in processedTweetInfo ){ //counties, coarse, fine
 			for( var place in tweetInfo[tid][grid_sizes[poly]] ){ //all counties/boxes
-				console.log(tid, poly, grid_sizes[poly], place)
 				//add the counts
 				var wt = tweetInfo[tid][ grid_sizes[poly] ][place]["w"];
 				if(place in processedTweetInfo[poly]["count"]){
@@ -54,6 +53,7 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, time_key
 	}
 
 	//update polys
+	var tdiff = time_keys.length/1440;
 	for( var poly in processedTweetInfo ){ //counties, coarse, fine
 		for( var i=0; i<polygonData[poly]["features"].length; i++){
 			var place = polygonData[poly]["features"][i]["properties"]["name"]
@@ -61,10 +61,9 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, time_key
 				var wt = processedTweetInfo[poly]["count"][ place ];
 				var stats_wt = 0;
 				if(wt){ 
-					//stats_wt = getStatsIdx(place, wt, poly);
-					//stats_wt = 100*( 1 - Math.pow( 1 - ((B-stats_wt) / (B)) , tdiff ) );
+					stats_wt = getStatsIdx(place, wt, poly, B, statsData);
+					stats_wt = 100*( 1 - Math.pow( 1 - ((B-stats_wt) / (B)) , tdiff ) );
 				}
-				stats_wt = 1;//TODO, testing
 				processedTweetInfo[poly]["stats"][ place ] = stats_wt;
 				polygonData[poly]["features"][i]["properties"]["count"] = wt;
 				polygonData[poly]["features"][i]["properties"]["stats"] = stats_wt;
