@@ -4,7 +4,7 @@ function getStatsIdx(place, val, poly, B, statsData){
 			return i;
 		}
 	}
-	return B;
+	return B-1; //-1 is a hack
 }
 
 export function getTimes(tweetInfo){
@@ -62,8 +62,12 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, statsDat
 				var stats_wt = 0;
 				if(wt){ 
 					stats_wt = getStatsIdx(place, wt, poly, B, statsData);
+					if(place == "powys"){
+						console.log(place, wt, stats_wt, 1 - ((B-stats_wt) / (B)) )
+					}
 					stats_wt = 100*( 1 - Math.pow( 1 - ((B-stats_wt) / (B)) , tdiff ) );
 				}
+
 				processedTweetInfo[poly]["stats"][ place ] = stats_wt;
 				polygonData[poly]["features"][i]["properties"]["count"] = wt;
 				polygonData[poly]["features"][i]["properties"]["stats"] = stats_wt;
