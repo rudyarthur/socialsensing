@@ -221,7 +221,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 	/////////////////////////////
 	function read_data(){
 		
-			fetch("http://localhost:8080/data/live.json")
+			fetch("./data/live.json")
 			.then(function(response) {
 				return response.json();
 			})
