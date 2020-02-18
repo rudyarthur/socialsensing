@@ -4,7 +4,7 @@ function getStatsIdx(place, val, poly, B, statsData){
 			return i;
 		}
 	}
-	return B-1; //-1 is a hack
+	return B;
 }
 
 export function getTimes(tweetInfo){
@@ -61,11 +61,13 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, statsDat
 				var wt = processedTweetInfo[poly]["count"][ place ];
 				var stats_wt = 0;
 				if(wt){ 
-					stats_wt = getStatsIdx(place, wt, poly, B, statsData);
-					if(place == "powys"){
-						console.log(place, wt, stats_wt, 1 - ((B-stats_wt) / (B)) )
-					}
-					stats_wt = 100*( 1 - Math.pow( 1 - ((B-stats_wt) / (B)) , tdiff ) );
+					var as_day = wt/tdiff; //average # tweets per day arraiving at a constant rate
+					stats_wt = getStatsIdx(place, as_day, poly, B, statsData); //number of days with fewer tweets
+					//exceedance probability = rank / (#days + 1) = p
+					//rank(t) = #days - #days_with_less_than(t)
+					//prob no events in N days = (1-p)^N
+					//prob event in N days = 1 - (1-p)^N
+					stats_wt = 100*( 1 - Math.pow( 1 - ((B+1-stats_wt) / (B+1)) , tdiff ) );
 				}
 
 				processedTweetInfo[poly]["stats"][ place ] = stats_wt;
