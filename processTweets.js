@@ -44,7 +44,7 @@ export function processData(tweetInfo, processedTweetInfo, polygonData, statsDat
 				for(var i in tweetInfo[tid][ grid_sizes[poly] ][place]["i"]){
 					var tweetcode_id = tweetInfo[tid][ grid_sizes[poly] ][place]["i"][i];
 					var tweetcode = tweetInfo[tid]["tweets"][tweetcode_id]; //html of the tweet
-					if( tweetcode != ""){ //should I show a max #of tweets?
+					if( tweetcode != "" && processedTweetInfo[poly]["count"][place] < 100){ //should I show a max #of tweets?
 						processedTweetInfo[poly]["embed"][place] += "<tr><td>" + tweetcode + "</td></tr>"
 					}
 				}
