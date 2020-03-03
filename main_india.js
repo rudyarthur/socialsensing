@@ -229,7 +229,6 @@ import {timeslider, cleanDate} from './timeSlider.js';
 			.then(function(tweet_json) {
 				tweetInfo = tweet_json
 				time_keys = getTimes(tweetInfo)
-				console.log(tweetInfo)
 				
 				processData(tweetInfo, processedTweetInfo, polygonData,  statsData, B, time_keys.slice(-default_max, -default_min), grid_sizes); 
 				
