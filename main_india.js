@@ -23,7 +23,7 @@ import {timeslider, cleanDate} from './timeSlider.js';
 		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
 			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-		id: 'mapbox.streets'
+		id: "mapbox/streets-v11"
 	}).addTo(map);
 
 	//define the layers for the different counts
