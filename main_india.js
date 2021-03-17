@@ -19,11 +19,13 @@ import {timeslider, cleanDate} from './timeSlider.js';
 
 	//Add roads from mapbox
 	var streets = L.tileLayer('"https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoicnVkeWFydGh1ciIsImEiOiJjamZrem1ic3owY3k4MnhuYWt2dGxmZmk5In0.ddp6_hNhs_n9MJMrlBwTVg"', {
-		maxZoom: 18,
-		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-			'<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="http://mapbox.com">Mapbox</a>',
-		id: "mapbox/streets-v11"
+          maxZoom:     18,
+          attribution: "Map data &copy; <a href=\"http://openstreetmap.org\">OpenStreetMap</a> contributors, " +
+                         "<a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA</a>, " +
+                         "Imagery © <a href=\"http://mapbox.com\">Mapbox</a>",
+          id: "mapbox/streets-v11",
+          tileSize: 512,
+          zoomOffset: -1
 	}).addTo(map);
 
 	//define the layers for the different counts
